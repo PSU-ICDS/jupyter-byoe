@@ -1,0 +1,17 @@
+---
+name: Jupyter
+category: Interactive Apps
+subcategory: Server Applications
+role: batch_connect
+metadata:
+  pintype: Interactive Servers
+description: |
+  Launch [Jupyter] Notebook or JupyterLab with your own custom environment or use a pre-built environment. See [documentation] creating a custom environment.
+  [Jupyter]: http://jupyter.org/
+  [documentation]: https://docs.icds.psu.edu/packages/anaconda/#jupyter-server
+
+  <div class="alert alert-info">
+    <ul>
+      <li>Quick Start: Use a pre-defined environment by selecting it from the dropdown if you do not have your own Jupyter environment</li>
+    </ul>
+  </div>

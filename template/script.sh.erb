@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Load the required environment
+<% if context.environment_check == "custom" %>
+<%= context.custom_environment.gsub(/\r\n?/, "\n") %>
+<% else %>
+module use /storage/icds/RISE/sw8/modules
+module load anaconda
+conda activate <%= context.prebuilt_environment %>
+<% end %>
+
+# Additional kernel support for Julia
+export JULIA_NUM_THREADS=${SLURM_CPUS_ON_NODE}
+echo "JULIA_NUM_THREADS: ${JULIA_NUM_THREADS}"
+
+# Start Jupyter Notebook Server
+echo "Host: ${host}"
+echo "Port: ${port}"
+echo "Password: ${password}"
+echo "Jupyter Password: ${JUPYTER_PASSWORD}"
+
+cd ${HOME}
+
+# Check Jupyter executable and list conda environments
+which <%= context.jupyter_exec %>
+conda env list
+
+# Start Jupyter Notebook
+<%= context.jupyter_exec %> --no-browser --ip=${ip} --port=${port} \
+  --NotebookApp.base_url=/node/${host}/${port} \
+  --NotebookApp.password="${JUPYTER_PASSWORD}" \
+  --NotebookApp.disable_check_xsrf=True \
+  --notebook-dir=${HOME} \
+  --NotebookApp.allow_origin='*' \
+  --NotebookNotary.db_file=':memory:'

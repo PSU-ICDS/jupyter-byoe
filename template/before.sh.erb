@@ -1,0 +1,11 @@
+# Find available port to run server on
+port=$(find_port ${host} 8888 8929)
+
+#Generate SHA1 encrypted password (uses system level OpenSSL)
+SALT=$(tr -cd '[:alnum:]' < /dev/urandom 2> /dev/null | head -c${1:-16})
+password=$(tr -cd '[:alnum:]' < /dev/urandom 2> /dev/null | head -c${1:-16})
+PASSWORD_SHA1="$(echo -n "${password}${SALT}" | LD_PRELOAD=/lib64/libssl.so.1.1:/lib64/libcrypto.so.1.1:/lib64/libz.so.1 /usr/bin/openssl dgst -sha1 | awk '{print $NF}')"
+
+# Export the generated password and Jupyter password
+export password
+export JUPYTER_PASSWORD="sha1:"${SALT}:${PASSWORD_SHA1}

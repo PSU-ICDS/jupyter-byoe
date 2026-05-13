@@ -1,0 +1,60 @@
+---
+title: "Jupyter"
+cluster:
+  - 2e
+
+form:
+  - jupyter_exec
+  - environment_check
+  - custom_environment
+  - prebuilt_environment
+  - auto_accounts
+  - auto_queues
+  - global_bc_num_hours
+  - global_cores
+  - global_memory
+  - global_advanced
+  - global_sbatch_options
+  - bc_email_on_started
+
+attributes:
+  jupyter_exec:
+    widget: select
+    label: "Jupyter interface"
+    options:
+      - [ "Jupyter Notebook", "jupyter-notebook" ]
+      - [ "Jupyter Lab", "jupyter-lab" ]
+    value: "jupyter_lab"
+  environment_check:
+    widget: select
+    label: Environment type
+    options: 
+      - [ "Use custom environment", "custom",
+          data-hide-prebuilt-environment: true
+        ]
+      - [ "Use pre-built RISE environment", "rise",
+          data-hide-custom-environment: true, 
+        ]
+    value: "1"
+  prebuilt_environment:
+    widget: select
+    label: "Select an environment from the RISE Software Stack"
+    options:
+      - [ "pytorch v1.11", "pytorch" ]
+      - [ "tensorflow v2.8.0", "tensorflow" ]
+      - [ "data-science collection", "data-sci" ]
+      - [ "deep-learning", "deep_learning" ]
+    help: |
+      - See [env-index] for a listing of packages installed in each environment
+      - Contact icds@psu.edu if you think an environment could benefit from the addition
+        of other packages or for help creating a new custom environment.
+      [env-index]: https://portal.hpc.psu.edu/pun/sys/dashboard/files/fs//storage/icds/RISE/sw8/anaconda/env-index 
+  custom_environment:
+    widget: text_area
+    label: Environment setup (drag text area to enlarge)
+    help: |
+      - Enter all the commands (e.g. module load, source activate) required to setup your custom environment (`jupyter-lab` or `jupyter-notebook` must be in PATH)
+      - Anaconda environments should use: `source activate <env_name>`
+    value: |
+        module load anaconda
+        source activate env_name

@@ -1,0 +1,10 @@
+sleep 5
+# Wait for the Jupyter Notebook Server to start
+echo "Waiting for Jupyter Notebook Server to open port ${port}..."
+if wait_until_port_used "${host}:${port}" 60; then
+  echo "Discovered Jupyter Notebook Server listening on port ${port}!"
+else
+  echo "Timed out waiting for Jupyter Notebook Server to open port ${port}!"
+  clean_up 1
+fi
+sleep 2
