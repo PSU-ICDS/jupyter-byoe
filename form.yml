@@ -3,6 +3,13 @@ title: "Jupyter"
 cluster:
   - 2e
 
+form_header: |
+  <div class="alert alert-info">
+    <ul>
+      <li>Quick Start: Use a pre-defined environment by selecting it from the dropdown if you do not have your own Jupyter environment</li>
+    </ul>
+  </div>
+
 form:
   - jupyter_exec
   - environment_check
