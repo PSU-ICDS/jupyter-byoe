@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Load the required environment
 <% if context.environment_check == "custom" %>
@@ -21,15 +21,33 @@ echo "Jupyter Password: ${JUPYTER_PASSWORD}"
 
 cd ${HOME}
 
+JUPYTER_CMD="<%= context.jupyter_exec %>"
+
 # Check Jupyter executable and list conda environments
-which <%= context.jupyter_exec %>
+echo "Jupyter Executable: ${JUPYTER_CMD}"
+echo "Jupyter Path: $(which "${JUPYTER_CMD}")"
+echo "Jupyter Version: $("${JUPYTER_CMD}" --version)"
+
 conda env list
 
-# Start Jupyter Notebook
-<%= context.jupyter_exec %> --no-browser --ip=${ip} --port=${port} \
-  --NotebookApp.base_url=/node/${host}/${port} \
-  --NotebookApp.password="${JUPYTER_PASSWORD}" \
-  --NotebookApp.disable_check_xsrf=True \
-  --notebook-dir=${HOME} \
-  --NotebookApp.allow_origin='*' \
-  --NotebookNotary.db_file=':memory:'
+if ${JUPYTER_CMD} --help-all 2>/dev/null | grep -q "ServerApp.base_url"; then
+    # Jupyter Server (1.x/2.x) and Notebook 7+ uses ServerApp.* config (2022-)
+    APP=ServerApp
+    ROOT_OPT="--ServerApp.root_dir=${HOME}"
+else
+    # Jupyter Notebook 5.x/6.x uses NotebookApp.* config (2017-2023)
+    APP=NotebookApp
+    ROOT_OPT="--notebook-dir=${HOME}"
+fi
+
+exec ${JUPYTER_CMD} \
+    --no-browser \
+    --ip="${ip}" \
+    --port="${port}" \
+    --${APP}.port_retries=0 \
+    --${APP}.base_url="/node/${host}/${port}" \
+    --${APP}.password="${JUPYTER_PASSWORD}" \
+    --${APP}.disable_check_xsrf=True \
+    --${APP}.allow_origin='*' \
+    --NotebookNotary.db_file=':memory:'
+    ${ROOT_OPT} \
